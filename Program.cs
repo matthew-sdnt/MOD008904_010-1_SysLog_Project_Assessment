@@ -1,4 +1,6 @@
-﻿namespace Syslog_Project
+﻿using Syslog_Project.Classes;
+
+namespace Syslog_Project
 {
     internal class Program
     {
