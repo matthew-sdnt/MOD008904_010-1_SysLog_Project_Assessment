@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO.Enumeration;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 
@@ -20,12 +21,32 @@ namespace Syslog_Project
         public string Ip_Address
         {
             get { return this.ip_address; }
-            set { this.ip_address = value; }
+            set
+            {
+                if (IPAddress.TryParse(value, out IPAddress ip))
+                {
+                    this.ip_address = ip.ToString();
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid address, using current address ({this.ip_address}).");
+                }
+            }
         }
         public int Port
         {
             get { return this.port; }
-            set { this.port = value; }
+            set
+            {
+                if (value < 1 || value > 65535 )
+                {
+                    Console.WriteLine($"Invalid port, using current port ({this.port}).");
+                }
+                else
+                {
+                    this.port = value;
+                }
+            }
         }
         public string[] Severity_Name
         {
@@ -41,8 +62,8 @@ namespace Syslog_Project
         public Config()
         {
 
-        }
-        public Config(string p_file_name)
+        } //This constructor exists to be used when deserializing the json.
+        private Config(string p_file_name)
         {
             this.file_name = p_file_name;
         }
