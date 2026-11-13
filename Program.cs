@@ -37,10 +37,47 @@
         {
             //MOD008904 010-1 SysLog Project Assessment
             //Variables
+            int menu_choice;
             Config config = Config.get_config();
 
             //Logic
+            do
+            {
+                menu_choice = input_int("Syslog Project" +
+                    "\n1. Start UDP Listener" +
+                    "\n2. Start TCP Listener" +
+                    "\n3. Display UDP Messages" +
+                    "\n4. Display TCP Messages" +
+                    "\n5. Toggle Real-Time Live Feed (UDP)" +
+                    "\n6. Toggle Real-Time Live Feed (TCP)" +
+                    "\n7. Configure IP / Port / Colours" +
+                    "\n8. Exit", 1, 8);
 
+                switch (menu_choice)
+                {
+                    case 1: // Start UPD Listener.
+                        Console.WriteLine("mainfunc");
+                        break;
+                    case 2: // Start TCP Listener.
+                        break;
+                    case 3: // Display UDP Messages.
+                        break;
+                    case 4: // Display TCP  Messages.
+                        break;
+                    case 5: // Toggle Real-Time Live Feed (UDP).
+                        break;
+                    case 6: // Toggle Real-Time Live Feed (TCP).
+                        break;
+                    case 7: // Configure IP / Port / Colours.
+                        break;
+                    case 8: // Exit case
+                        Console.WriteLine("Exiting...");
+                        break;
+                    default: //Catchall.
+                        Console.WriteLine("Error, invalid input.");
+                        break;
+                }
+            } while (menu_choice != 8);
         }
     }
 }
