@@ -7,12 +7,12 @@
         {
             int num; //The variable to store the number inputted.
 
-            Console.WriteLine(p_prompt);
+            Console.Write(p_prompt);
             while (!int.TryParse(Console.ReadLine(), out num)) //Attempt to convert input to integer, storing if success.
             {
                 Console.Clear(); //Clears the console for neatness.
                 Console.WriteLine("Please input an integer."); //If the input cannot be converted to an integer.
-                Console.WriteLine(p_prompt);
+                Console.Write(p_prompt);
             }
 
             Console.Clear();
@@ -25,13 +25,29 @@
             do
             {
                 num = input_int(p_prompt);
-                if (num < p_min || num > p_max)
+                if (num < p_min || num > p_max) //Check if in range of p_min - p_max.
                 {
                     Console.WriteLine($"Please give an input within the given range {p_min} - {p_max}.");
                 }
-            } while (num < p_min || num > p_max);
+            } while (num < p_min || num > p_max); //Check if in range of p_min - p_max.
 
             return num;
+        }
+        static string input_string(string p_prompt)
+        {
+            string str;
+
+            do
+            {
+                Console.Write(p_prompt);
+                str = Console.ReadLine();
+                if (String.IsNullOrWhiteSpace(str)) //We are not allowing whitespace as inputs.
+                {
+                    Console.WriteLine("Please do not input whitespace.");
+                }
+            } while (String.IsNullOrWhiteSpace(str)); //We are not allowing whitespace as inputs.
+
+            return str;
         }
         static void Main(string[] args)
         {

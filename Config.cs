@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 
-namespace Syslog_Project
+namespace Syslog_Project.Classes
 {
     internal class Config //This class exists to store information about the app config.
     {
