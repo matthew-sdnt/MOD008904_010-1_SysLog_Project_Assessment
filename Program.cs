@@ -67,28 +67,68 @@
                     "\n5. Toggle Real-Time Live Feed (UDP)" +
                     "\n6. Toggle Real-Time Live Feed (TCP)" +
                     "\n7. Configure IP / Port / Colours" +
-                    "\n8. Exit", 1, 8);
+                    "\n8. Exit\nChoice: ", 1, 8);
 
                 switch (menu_choice)
                 {
                     case 1: // Start UPD Listener.
-                        Console.WriteLine("mainfunc");
                         break;
+
                     case 2: // Start TCP Listener.
                         break;
+
                     case 3: // Display UDP Messages.
                         break;
+
                     case 4: // Display TCP  Messages.
                         break;
+
                     case 5: // Toggle Real-Time Live Feed (UDP).
                         break;
+
                     case 6: // Toggle Real-Time Live Feed (TCP).
                         break;
+
                     case 7: // Configure IP / Port / Colours.
+                        menu_choice = input_int("1. Configure IP\n2. Port\n3. Coloures\nChoice: ", 1, 3);
+                        switch (menu_choice)
+                        {
+                            case 1: //Configure IP
+                                config.Ip_Address = input_string("IP Address: ");
+                                Console.Write("Writing...");
+                                config.write_config(); //Write the changes made above to the disk.
+                                Console.WriteLine($"Your current IP Address is now: {config.Ip_Address} "); //Output the new value of the IP Address to ensure the user knows it has changed.
+                                
+                                Console.Write("Press enter to continue...");
+                                Console.ReadLine();
+                                break;
+
+                            case 2: //Port
+                                config.Port = input_int("Port Number (1 - 65535): ", 1, 65535);
+                                Console.Write("Writing...");
+                                config.write_config(); //Write the changes made above to the disk.
+                                Console.WriteLine($"Your current port is now: {config.Port}"); //Output the new value of the port to ensure the user knows it has changed.
+                                
+                                Console.Write("Press enter to continue...");
+                                Console.ReadLine();
+                                break;
+
+                            case 3: //Colours.
+                                //TODO
+                                break;
+
+                            default: //Catchall.
+                                Console.WriteLine("Error, invalid input.");
+                                break;
+                        }
                         break;
+
                     case 8: // Exit case
+                        Console.WriteLine("Writing config..."); //Save the config for redundacy. While no changes should be made that aren't yet, this is here to ensure that all changes are saved.
+                        config.write_config();
                         Console.WriteLine("Exiting...");
                         break;
+
                     default: //Catchall.
                         Console.WriteLine("Error, invalid input.");
                         break;
