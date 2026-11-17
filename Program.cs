@@ -56,12 +56,15 @@ namespace Syslog_Project
             //MOD008904 010-1 SysLog Project Assessment
             //Variables
             int menu_choice;
+            int colour_choice;
+            ConsoleColor[] colours = Enum.GetValues<ConsoleColor>();
             Config config = Config.get_config();
 
             //Logic
             do
             {
-                menu_choice = input_int("Syslog Project" +
+                menu_choice = input_int("Syslog Server Remote Store App" +
+                    $"\nCurrent Target: {config.Ip_Address}:{config.Port}" +
                     "\n1. Start UDP Listener" +
                     "\n2. Start TCP Listener" +
                     "\n3. Display UDP Messages" +
@@ -70,6 +73,7 @@ namespace Syslog_Project
                     "\n6. Toggle Real-Time Live Feed (TCP)" +
                     "\n7. Configure IP / Port / Colours" +
                     "\n8. Exit\nChoice: ", 1, 8);
+                Console.Clear();
 
                 switch (menu_choice)
                 {
@@ -92,7 +96,8 @@ namespace Syslog_Project
                         break;
 
                     case 7: // Configure IP / Port / Colours.
-                        menu_choice = input_int("1. Configure IP\n2. Port\n3. Coloures\nChoice: ", 1, 3);
+                        menu_choice = input_int("1. Configure IP\n2. Port\n3. Colours\nChoice: ", 1, 3);
+                        Console.Clear();
                         switch (menu_choice)
                         {
                             case 1: //Configure IP
@@ -109,14 +114,33 @@ namespace Syslog_Project
                                 config.Port = input_int("Port Number (1 - 65535): ", 1, 65535);
                                 Console.Write("Writing...");
                                 config.write_config(); //Write the changes made above to the disk.
-                                Console.WriteLine($"Your current port is now: {config.Port}"); //Output the new value of the port to ensure the user knows it has changed.
+                                Console.WriteLine($"Your current port is now: {config.Port}"); //Output the new value of the Port to ensure the user knows it has changed.
                                 
                                 Console.Write("Press enter to continue...");
                                 Console.ReadLine();
                                 break;
 
                             case 3: //Colours.
-                                //TODO
+                                for (int i = 0; i < config.Severity_Name.Length; i++)
+                                {
+                                    Console.WriteLine($"{i + 1}. {config.Severity_Name[i]} - {(ConsoleColor) config.Severity_Colour[i]}");
+                                }
+
+                                menu_choice = input_int("Which severity colour are you changing?: ", 1, config.Severity_Name.Length);
+                                Console.Clear();
+
+                                Console.WriteLine($"The {config.Severity_Name[menu_choice - 1]} severity has the colour of {(ConsoleColor)config.Severity_Colour[menu_choice - 1]}, what would you like to change it to?");
+                                for (int i = 0; i < colours.Length; i++)
+                                {
+                                    Console.WriteLine($"{i + 1}. {colours[i]}");
+                                }
+
+                                colour_choice = input_int("Choice: ", 1, colours.Length);
+                                Console.Clear();
+                                config.set_colour(menu_choice - 1, colour_choice - 1);
+
+                                Console.Write("Press enter to continue...");
+                                Console.ReadLine();
                                 break;
 
                             default: //Catchall.
@@ -125,8 +149,8 @@ namespace Syslog_Project
                         }
                         break;
 
-                    case 8: // Exit case
-                        Console.WriteLine("Writing config..."); //Save the config for redundacy. While no changes should be made that aren't yet, this is here to ensure that all changes are saved.
+                    case 8: // Exit case.
+                        Console.WriteLine("Writing config..."); //Save the config for redundacy. While no changes should be made that aren't yet written by this point, this is here to ensure that all changes are definitely saved.
                         config.write_config();
                         Console.WriteLine("Exiting...");
                         break;
@@ -135,6 +159,7 @@ namespace Syslog_Project
                         Console.WriteLine("Error, invalid input.");
                         break;
                 }
+                Console.Clear();
             } while (menu_choice != 8);
         }
     }

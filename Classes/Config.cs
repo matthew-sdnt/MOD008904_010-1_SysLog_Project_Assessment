@@ -14,7 +14,7 @@ namespace Syslog_Project.Classes
         private string file_name = "config.json";
         private string ip_address = "127.0.0.1";
         private int port = 514;
-        public string[] severity_name = new string[8] { "Emergency", "Alert", "Critical", "Error", "Warning", "Notice", "Information", "Debug" };
+        private string[] severity_name = new string[8] { "Emergency", "Alert", "Critical", "Error", "Warning", "Notice", "Information", "Debug" };
         private int[] severity_colour = new int[8] { 12, 12, 12, 6, 14, 9, 10, 7 };
 
         //Properties
@@ -23,7 +23,7 @@ namespace Syslog_Project.Classes
             get { return this.ip_address; }
             set
             {
-                if (IPAddress.TryParse(value, out IPAddress ip))
+                if (IPAddress.TryParse(value, out IPAddress ip)) //Convert to IP both to make sure that the input is valid and force the input into the correct formatting for an IP Address (otherwise when "1" is inputted it would just be enterred as "1" and not "0.0.0.1" ("0.0.0.1" being the intended).
                 {
                     this.ip_address = ip.ToString();
                 }
@@ -98,6 +98,12 @@ namespace Syslog_Project.Classes
             JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
             string json_string = JsonSerializer.Serialize(this, options);
             File.WriteAllText(this.file_name, json_string);
+        }
+
+        public void set_colour(int p_index, int p_colour)
+        {
+            this.severity_colour[p_index] = p_colour;
+            Console.WriteLine($"The {this.severity_name[p_index]} severity now has the colour of {(ConsoleColor) p_colour}.");
         }
     }
 }
