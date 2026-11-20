@@ -1,4 +1,5 @@
 ﻿using Syslog_Project.Classes;
+using Syslog_Project.Classes.Listeners;
 
 namespace Syslog_Project
 {
@@ -51,7 +52,7 @@ namespace Syslog_Project
 
             return str;
         }
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             //MOD008904 010-1 SysLog Project Assessment
             //Variables
@@ -59,14 +60,16 @@ namespace Syslog_Project
             int colour_choice;
             ConsoleColor[] colours = Enum.GetValues<ConsoleColor>();
             Config config = Config.get_config();
+            UDPListener udp_listener = new UDPListener("UDP", config.Ip_Address, config.Port);
+            TCPListener tcp_listener = new TCPListener("TCP", config.Ip_Address, config.Port);
 
             //Logic
             do
             {
                 menu_choice = input_int("Syslog Server Remote Store App" +
                     $"\nCurrent Target: {config.Ip_Address}:{config.Port}" +
-                    "\n1. Start UDP Listener" +
-                    "\n2. Start TCP Listener" +
+                    $"\n1. {udp_listener.Start_Stop} {udp_listener.Listener_Type} Listener" +
+                    $"\n2. {tcp_listener.Start_Stop} {tcp_listener.Listener_Type} Listener" +
                     "\n3. Display UDP Messages" +
                     "\n4. Display TCP Messages" +
                     "\n5. Toggle Real-Time Live Feed (UDP)" +
@@ -78,12 +81,29 @@ namespace Syslog_Project
                 switch (menu_choice)
                 {
                     case 1: // Start UPD Listener.
+                        if (!udp_listener.Running)
+                        {
+                            udp_listener.Start_Listener();
+                            Console.WriteLine($"{udp_listener.Listener_Type} Listener started.");
+                            Console.ReadLine();
+                        }
+                        else
+                        {
+                            udp_listener.Stop_Listener();
+                            Console.WriteLine($"{udp_listener.Listener_Type} Listener stopped.");
+                            Console.ReadLine();
+                        }
                         break;
 
                     case 2: // Start TCP Listener.
                         break;
 
                     case 3: // Display UDP Messages.
+                        foreach (var message in udp_listener.Messages) //This is temporary.
+                        {
+                            Console.WriteLine(message.type);
+                        }
+                        Console.ReadLine();
                         break;
 
                     case 4: // Display TCP  Messages.
@@ -96,6 +116,23 @@ namespace Syslog_Project
                         break;
 
                     case 7: // Configure IP / Port / Colours.
+                        if (tcp_listener.Running || udp_listener.Running) //If any listeners are running.
+                        {
+                            if (udp_listener.Running)
+                            {
+                                udp_listener.Stop_Listener(); //Stop the listener.
+                                Console.WriteLine($"{udp_listener.Listener_Type} Listener stopped.");
+                            }
+                            if (tcp_listener.Running)
+                            {
+                                tcp_listener.Stop_Listener(); //Stop the listener.
+                                Console.WriteLine($"{tcp_listener.Listener_Type} Listener stopped.");
+                            }
+                            Console.Write("This was done to prevent any errors while changing the config, you may restart these afterwards.\nPress enter to continue..."); //Explain why we have done this.
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+
                         menu_choice = input_int("1. Configure IP\n2. Port\n3. Colours\nChoice: ", 1, 3);
                         Console.Clear();
                         switch (menu_choice)
@@ -147,6 +184,8 @@ namespace Syslog_Project
                                 Console.WriteLine("Error, invalid input.");
                                 break;
                         }
+                        udp_listener.recheck_config(config);
+                        tcp_listener.recheck_config(config);
                         break;
 
                     case 8: // Exit case.
